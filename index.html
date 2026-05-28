@@ -103,15 +103,34 @@ nav {
   display: flex; flex-direction: column; justify-content: flex-end;
   padding: 0 60px 100px;
   position: relative; overflow: hidden;
-  background: var(--white);
+  background-color: var(--white);
+
+  /* Desktop: building anchored right, roots spread left */
+  background-image: url('./roots-building.png');
+  background-repeat: no-repeat;
+  background-size: 62% auto;
+  background-position: right bottom;
 }
 
-/* Very subtle warm off-white gradient wash — not a color, just warmth */
-.hero::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 65% 30%, rgba(166,139,91,0.06) 0%, transparent 70%);
-  pointer-events: none;
+/* Constrain headline so it doesn't run into the building */
+.hero-h1  { max-width: 52%; }
+.hero-sub { max-width: 44%; }
+
+/* Mobile portrait — stack image below text, center it */
+@media (max-width: 840px) {
+  .hero {
+    min-height: 100svh;
+    background-size: 100% auto;
+    background-position: center bottom;
+    /* push content up so image has room below */
+    padding-bottom: 48vw;
+    justify-content: flex-start;
+    padding-top: 120px;
+  }
+  .hero-h1  { max-width: 100%; }
+  .hero-sub { max-width: 100%; }
+  /* hide scroll hint on mobile — image fills that area */
+  .hero-scroll { display: none; }
 }
 
 /* Hero tag */
