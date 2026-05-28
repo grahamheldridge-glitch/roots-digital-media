@@ -100,36 +100,83 @@ nav {
 /* ─── HERO ────────────────────────── */
 .hero {
   min-height: 100svh;
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding: 0 60px 100px;
-  position: relative; overflow: hidden;
-  background-color: var(--white);
-
-  /* Desktop: building anchored right, roots spread left */
-  background-image: url('./roots-building.png');
-  background-repeat: no-repeat;
-  background-size: 62% auto;
-  background-position: right bottom;
+  padding-top: 68px; /* nav height */
+  background: var(--white);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
 }
 
-/* Constrain headline so it doesn't run into the building */
-.hero-h1  { max-width: 52%; }
-.hero-sub { max-width: 44%; }
+/* Top row: headline left, image right */
+.hero-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: flex-end;
+  padding: 80px 60px 0;
+  gap: 0;
+}
 
-/* Mobile portrait — stack image below text, center it */
+.hero-text {
+  display: flex; flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: 40px;
+}
+
+/* Image fills its column, slides in from right */
+.hero-img-wrap {
+  overflow: hidden;
+  display: flex; align-items: flex-end;
+  opacity: 0;
+  transform: translateX(60px);
+  animation: slideInRight 1.2s var(--ease) .5s forwards;
+}
+.hero-img-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  object-position: bottom;
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(60px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Bottom row: subtext + button full width under everything */
+.hero-bottom {
+  padding: 40px 60px 60px;
+  display: flex; align-items: center;
+  justify-content: space-between;
+  gap: 40px; flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  opacity: 0;
+  animation: up .8s var(--ease) 1s forwards;
+}
+
+.hero-h1 { max-width: 100%; }
+
+/* Mobile */
 @media (max-width: 840px) {
-  .hero {
-    min-height: 100svh;
-    background-size: 100% auto;
-    background-position: center bottom;
-    /* push content up so image has room below */
-    padding-bottom: 48vw;
-    justify-content: flex-start;
-    padding-top: 120px;
+  .hero { grid-template-rows: auto auto; }
+  .hero-top {
+    grid-template-columns: 1fr;
+    padding: 48px 24px 0;
   }
-  .hero-h1  { max-width: 100%; }
-  .hero-sub { max-width: 100%; }
-  /* hide scroll hint on mobile — image fills that area */
+  .hero-text { padding-bottom: 24px; }
+  .hero-img-wrap {
+    transform: translateY(40px);
+    animation: slideInUp 1s var(--ease) .5s forwards;
+  }
+  @keyframes slideInUp {
+    from { opacity:0; transform: translateY(40px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .hero-bottom {
+    padding: 32px 24px 48px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
   .hero-scroll { display: none; }
 }
 
@@ -545,16 +592,26 @@ footer {
 
 <!-- ─── HERO ─────────────────────── -->
 <section class="hero">
-  <div class="hero-tag">
-    <div class="hero-tag-dot"></div>
-    <span class="hero-tag-text">Digital Growth Studio · Jonesboro, AR</span>
+
+  <!-- Top: headline left, building image right -->
+  <div class="hero-top">
+    <div class="hero-text">
+      <div class="hero-tag">
+        <div class="hero-tag-dot"></div>
+        <span class="hero-tag-text">Digital Growth Studio · Jonesboro, AR</span>
+      </div>
+      <h1 class="hero-h1">
+        We help small<br>businesses<br>
+        <span class="serif-word">grow deeper.</span>
+      </h1>
+    </div>
+
+    <div class="hero-img-wrap">
+      <img src="./roots-building.png" alt="A business built on strong roots">
+    </div>
   </div>
 
-  <h1 class="hero-h1">
-    We help small<br>businesses<br>
-    <span class="serif-word">grow deeper.</span>
-  </h1>
-
+  <!-- Bottom: subtext + CTA full width below image -->
   <div class="hero-bottom">
     <p class="hero-sub">
       Websites, photography, video, and marketing built for businesses that want more customers — not just more noise.
@@ -566,14 +623,10 @@ footer {
           <path d="M2.5 7h9M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
-      <a href="#services" class="btn-outline">See our work</a>
+      <a href="#process" class="btn-outline">See how it works</a>
     </div>
   </div>
 
-  <div class="hero-scroll" aria-hidden="true">
-    <div class="scroll-bar"></div>
-    <span class="scroll-label">Scroll</span>
-  </div>
 </section>
 
 
