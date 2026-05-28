@@ -105,31 +105,54 @@ nav {
   position: relative; overflow: hidden;
   background-color: var(--white);
 
-  /* Desktop: building anchored right, roots spread left */
+  /* Desktop: full width, building sits on the bottom right, roots spread across */
   background-image: url('./roots-building.png');
   background-repeat: no-repeat;
-  background-size: 62% auto;
-  background-position: right bottom;
+  background-size: 100% auto;
+  background-position: center bottom;
+}
+
+/* Fade-in from right overlay so text stays readable */
+.hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,1) 0%,
+    rgba(255,255,255,0.92) 35%,
+    rgba(255,255,255,0.4) 60%,
+    rgba(255,255,255,0) 100%
+  );
+  pointer-events: none;
 }
 
 /* Constrain headline so it doesn't run into the building */
-.hero-h1  { max-width: 52%; }
-.hero-sub { max-width: 44%; }
+.hero-h1  { max-width: 55%; position: relative; z-index: 1; }
+.hero-sub { max-width: 46%; position: relative; z-index: 1; }
+.hero-tag { position: relative; z-index: 1; }
+.hero-bottom { position: relative; z-index: 1; }
 
-/* Mobile portrait — stack image below text, center it */
+/* Mobile portrait — image smaller, text full width */
 @media (max-width: 840px) {
   .hero {
     min-height: 100svh;
-    background-size: 100% auto;
+    background-size: 140% auto;
     background-position: center bottom;
-    /* push content up so image has room below */
-    padding-bottom: 48vw;
+    padding-bottom: 52vw;
     justify-content: flex-start;
     padding-top: 120px;
   }
+  .hero::after {
+    background: linear-gradient(
+      to bottom,
+      rgba(255,255,255,1) 0%,
+      rgba(255,255,255,0.95) 50%,
+      rgba(255,255,255,0.2) 80%,
+      rgba(255,255,255,0) 100%
+    );
+  }
   .hero-h1  { max-width: 100%; }
   .hero-sub { max-width: 100%; }
-  /* hide scroll hint on mobile — image fills that area */
   .hero-scroll { display: none; }
 }
 
