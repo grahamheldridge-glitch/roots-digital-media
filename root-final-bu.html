@@ -428,228 +428,169 @@ nav {
   font-style: italic;
 }
 
-/* ─── PROCESS — TIMELINE ──────────── */
+/* ─── PROCESS — SPLIT SCREEN ─────── */
 .process-section {
-  background: var(--almost-black);
-  padding: 128px 0 140px;
-  position: relative; overflow: hidden;
-}
-/* Subtle warm glow top-right */
-.process-section::after {
-  content: '';
-  position: absolute; top: -120px; right: -120px;
-  width: 480px; height: 480px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(46,58,46,0.5) 0%, transparent 70%);
-  pointer-events: none;
+  position: relative;
 }
 .process-section .eyebrow { color: var(--tan); }
 .process-section .eyebrow::before { background: var(--tan); }
 .process-section .section-h2 { color: var(--off-white); }
 .process-section .section-h2 .it { color: var(--tan); }
 
-/* ── DESKTOP: horizontal timeline ── */
-.timeline-wrap {
-  position: relative;
-  margin-top: 96px;
-  padding: 0 60px;
+.process-header {
+  background: var(--almost-black);
+  padding: 128px 60px 80px;
+  max-width: 100%;
 }
 
-/* The spine — draws left-to-right via JS */
-.tl-spine {
-  position: absolute;
-  top: 50%; left: 60px; right: 60px;
-  height: 1px;
+/* Each step is its own full-viewport-height split row */
+.ps-step {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
   overflow: hidden;
 }
-.tl-spine::before {
-  content: '';
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(166,139,91,0.5) 4%,
-    rgba(166,139,91,0.5) 96%,
-    transparent 100%
-  );
-  width: 100%;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 1.6s cubic-bezier(0.16,1,0.3,1);
-}
-.tl-spine.drawn::before { transform: scaleX(1); }
+.ps-step:nth-child(1) { background: #1C1C1C; }
+.ps-step:nth-child(2) { background: #1e2118; }
+.ps-step:nth-child(3) { background: #202818; }
+.ps-step:nth-child(4) { background: #243020; }
 
-/* Four-column grid */
-.tl-steps {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  position: relative;
-  z-index: 1;
-}
-
-/* Each step — odd ones above line, even ones below */
-.tl-step {
+/* ── LEFT panel — giant number + step name */
+.ps-left {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: center;
+  padding: 80px 60px 80px 80px;
+  border-right: 1px solid rgba(242,240,230,0.06);
   position: relative;
-  cursor: default;
+  overflow: hidden;
 }
 
-/* ODD: content on top, dot on bottom */
-.tl-step:nth-child(odd) {
-  padding-bottom: 28px;
-  justify-content: flex-end;
+/* The massive background number */
+.ps-big-n {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: clamp(180px, 24vw, 300px);
+  letter-spacing: -.07em;
+  line-height: .85;
+  color: rgba(242,240,230,0.04);
+  position: absolute;
+  left: -10px; bottom: -20px;
+  user-select: none; pointer-events: none;
+  transition: color 1.2s var(--ease);
 }
-/* EVEN: dot on top, content on bottom */
-.tl-step:nth-child(even) {
-  flex-direction: column-reverse;
-  padding-top: 28px;
-  justify-content: flex-start;
+.ps-step.in .ps-big-n { color: rgba(166,139,91,0.1); }
+
+.ps-step-num {
+  font-size: 11px; font-weight: 600; letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(166,139,91,0.45);
+  margin-bottom: 20px;
+  position: relative; z-index: 1;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity .6s var(--ease), transform .6s var(--ease);
+}
+.ps-step.in .ps-step-num { opacity: 1; transform: none; transition-delay: .1s; }
+
+.ps-step-name {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(44px, 6vw, 88px);
+  letter-spacing: -.02em;
+  line-height: 1.0;
+  color: var(--off-white);
+  position: relative; z-index: 1;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity .8s var(--ease), transform .8s var(--ease);
+}
+.ps-step.in .ps-step-name { opacity: 1; transform: none; transition-delay: .2s; }
+
+/* Tan rule that grows in */
+.ps-rule {
+  width: 0; height: 2px;
+  background: linear-gradient(90deg, var(--tan), transparent);
+  border-radius: 2px;
+  margin-top: 32px;
+  position: relative; z-index: 1;
+  transition: width 1s cubic-bezier(0.16,1,0.3,1);
+}
+.ps-step.in .ps-rule { width: 72px; transition-delay: .35s; }
+
+/* ── RIGHT panel — description */
+.ps-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 80px 80px 72px;
+  position: relative;
 }
 
-/* Content block */
-.tl-content {
-  padding: 0 20px 0;
-  text-align: center;
-  /* Drop-in from top animation */
-  opacity: 0;
-  transform: translateY(-32px);
-  transition:
-    opacity .7s var(--ease),
-    transform .7s var(--ease);
-}
-.tl-step:nth-child(even) .tl-content {
-  transform: translateY(32px); /* Even ones come from below */
-}
-.tl-step.in .tl-content {
-  opacity: 1;
-  transform: translateY(0);
-}
-/* Stagger delays */
-.tl-step:nth-child(1) .tl-content { transition-delay: .1s; }
-.tl-step:nth-child(2) .tl-content { transition-delay: .3s; }
-.tl-step:nth-child(3) .tl-content { transition-delay: .5s; }
-.tl-step:nth-child(4) .tl-content { transition-delay: .7s; }
-
-/* Connector: thin line between content and dot */
-.tl-connector {
-  width: 1px;
-  height: 48px;
-  flex-shrink: 0;
-  background: linear-gradient(to bottom,
-    rgba(166,139,91,0.5),
-    rgba(166,139,91,0.15)
-  );
+/* Progress pips */
+.ps-pips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 56px;
   opacity: 0;
   transition: opacity .5s var(--ease);
 }
-.tl-step:nth-child(even) .tl-connector {
-  background: linear-gradient(to top,
-    rgba(166,139,91,0.5),
-    rgba(166,139,91,0.15)
-  );
+.ps-step.in .ps-pips { opacity: 1; transition-delay: .15s; }
+.ps-pip {
+  height: 2px; border-radius: 2px;
+  background: rgba(242,240,230,0.1);
+  transition: background .4s, width .4s;
+  width: 20px;
 }
-.tl-step.in .tl-connector { opacity: 1; transition-delay: .2s; }
+.ps-pip.active { background: var(--tan); width: 32px; }
 
-/* The dot on the spine */
-.tl-dot {
-  width: 12px; height: 12px; border-radius: 50%;
-  background: var(--almost-black);
-  border: 2px solid rgba(166,139,91,0.4);
-  flex-shrink: 0;
-  transition: border-color .4s, background .4s, transform .4s var(--ease), box-shadow .4s;
-  position: relative; z-index: 2;
-}
-.tl-step:hover .tl-dot {
-  border-color: var(--tan);
-  background: var(--tan);
-  transform: scale(1.6);
-  box-shadow: 0 0 16px rgba(166,139,91,0.4);
-}
-
-/* Step label */
-.tl-num {
-  font-size: 10px; font-weight: 600; letter-spacing: .18em;
-  text-transform: uppercase;
-  color: rgba(166,139,91,0.5);
-  margin-bottom: 10px;
-  transition: color .3s;
-}
-.tl-step:hover .tl-num { color: var(--tan); }
-
-/* Step title */
-.tl-title {
+.ps-title {
   font-weight: 800;
-  font-size: clamp(16px, 1.6vw, 20px);
-  letter-spacing: -.02em; line-height: 1.15;
+  font-size: clamp(26px, 3.5vw, 48px);
+  letter-spacing: -.03em; line-height: 1.08;
   color: var(--off-white);
-  margin-bottom: 10px;
-  transition: color .3s;
+  margin-bottom: 24px;
+  opacity: 0; transform: translateX(24px);
+  transition: opacity .8s var(--ease), transform .8s var(--ease);
 }
-.tl-step:hover .tl-title { color: var(--white); }
+.ps-step.in .ps-title { opacity: 1; transform: none; transition-delay: .3s; }
 
-/* Step body */
-.tl-body {
-  font-size: 13px; font-weight: 300; line-height: 1.75;
-  color: rgba(242,240,230,0.3);
-  transition: color .3s;
-  max-width: 220px;
-  margin: 0 auto;
+.ps-body {
+  font-size: 17px; font-weight: 300; line-height: 1.85;
+  color: rgba(242,240,230,0.38);
+  max-width: 440px;
+  opacity: 0; transform: translateX(24px);
+  transition: opacity .8s var(--ease), transform .8s var(--ease), color .4s;
 }
-.tl-step:hover .tl-body { color: rgba(242,240,230,0.6); }
+.ps-step.in .ps-body { opacity: 1; transform: none; transition-delay: .42s; }
+.ps-step:hover .ps-body { color: rgba(242,240,230,0.58); }
 
-/* ── MOBILE: vertical spine ── */
+/* Step counter bottom-right */
+.ps-count {
+  position: absolute;
+  bottom: 48px; right: 60px;
+  font-size: 11px; font-weight: 500; letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(242,240,230,0.1);
+}
+
+/* ── MOBILE ── */
 @media(max-width:840px){
-  .process-section { padding: 80px 0 100px; }
-
-  .tl-spine { display: none; }
-
-  .timeline-wrap {
-    padding: 0 24px;
-    margin-top: 64px;
-  }
-
-  .tl-steps {
+  .process-header { padding: 80px 24px 56px; }
+  .ps-step {
     grid-template-columns: 1fr;
-    gap: 0;
-    padding-left: 28px;
-    border-left: 1px solid rgba(166,139,91,0.25);
-    position: relative;
+    min-height: auto;
   }
-
-  /* On mobile every step is the same direction */
-  .tl-step,
-  .tl-step:nth-child(even) {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 24px;
-    padding: 0 0 52px 0;
-    justify-content: flex-start;
+  .ps-left {
+    padding: 60px 24px 40px;
+    border-right: none;
+    border-bottom: 1px solid rgba(242,240,230,0.06);
+    min-height: 280px;
   }
-  .tl-step:last-child { padding-bottom: 0; }
-
-  /* Dot sits on the left spine */
-  .tl-dot {
-    position: absolute;
-    left: -6px;
-    margin-top: 4px;
-    flex-shrink: 0;
-  }
-
-  /* Hide vertical connectors on mobile */
-  .tl-connector { display: none; }
-
-  .tl-content {
-    text-align: left;
-    padding: 0;
-    transform: translateX(-16px);
-  }
-  .tl-step:nth-child(even) .tl-content {
-    transform: translateX(-16px);
-  }
-  .tl-step.in .tl-content { transform: translateX(0); }
-
-  .tl-body { max-width: none; margin: 0; }
+  .ps-big-n { font-size: 140px; }
+  .ps-right { padding: 40px 24px 72px; }
+  .ps-count { display: none; }
+  .ps-body { font-size: 15px; }
 }
 
 /* ─── CTA ─────────────────────────── */
@@ -836,57 +777,84 @@ footer {
 
 <!-- ─── PROCESS ───────────────────── -->
 <section class="process-section" id="process">
-  <div class="wrap">
+
+  <div class="process-header">
     <p class="eyebrow rv">How it works</p>
     <h2 class="section-h2 rv d1">From first call to <span class="it">full growth.</span></h2>
   </div>
 
-  <div class="timeline-wrap">
-    <div class="tl-spine" id="tl-spine"></div>
-    <div class="tl-steps">
-
-      <div class="tl-step">
-        <div class="tl-content">
-          <p class="tl-num">01 — Discovery</p>
-          <h3 class="tl-title">Root Discovery</h3>
-          <p class="tl-body">We go deep on your business — customers, competition, goals. Strategy starts with the right foundation.</p>
-        </div>
-        <div class="tl-connector"></div>
-        <div class="tl-dot"></div>
+  <div class="ps-step">
+    <div class="ps-left">
+      <p class="ps-step-num">01</p>
+      <h3 class="ps-step-name">Root<br>Discovery.</h3>
+      <div class="ps-rule"></div>
+      <div class="ps-big-n">01</div>
+    </div>
+    <div class="ps-right">
+      <div class="ps-pips">
+        <div class="ps-pip active"></div><div class="ps-pip"></div>
+        <div class="ps-pip"></div><div class="ps-pip"></div>
       </div>
-
-      <div class="tl-step">
-        <div class="tl-dot"></div>
-        <div class="tl-connector"></div>
-        <div class="tl-content">
-          <p class="tl-num">02 — Strategy</p>
-          <h3 class="tl-title">Custom Blueprint</h3>
-          <p class="tl-body">A roadmap built for your market and budget. No templates — every plan written for your specific moment.</p>
-        </div>
-      </div>
-
-      <div class="tl-step">
-        <div class="tl-content">
-          <p class="tl-num">03 — Build</p>
-          <h3 class="tl-title">Create &amp; Launch</h3>
-          <p class="tl-body">Every asset built with precision — websites, content, visuals, campaigns. Designed to perform.</p>
-        </div>
-        <div class="tl-connector"></div>
-        <div class="tl-dot"></div>
-      </div>
-
-      <div class="tl-step">
-        <div class="tl-dot"></div>
-        <div class="tl-connector"></div>
-        <div class="tl-content">
-          <p class="tl-num">04 — Scale</p>
-          <h3 class="tl-title">Grow Together</h3>
-          <p class="tl-body">We don't disappear after launch. We monitor, optimize, and stay rooted in your long-term growth.</p>
-        </div>
-      </div>
-
+      <h4 class="ps-title">We start by going deep, not wide.</h4>
+      <p class="ps-body">Your customers, your competition, your goals. Good strategy starts with the right foundation — we ask the questions most agencies skip.</p>
+      <span class="ps-count">01 / 04</span>
     </div>
   </div>
+
+  <div class="ps-step">
+    <div class="ps-left">
+      <p class="ps-step-num">02</p>
+      <h3 class="ps-step-name">Custom<br>Blueprint.</h3>
+      <div class="ps-rule"></div>
+      <div class="ps-big-n">02</div>
+    </div>
+    <div class="ps-right">
+      <div class="ps-pips">
+        <div class="ps-pip active"></div><div class="ps-pip active"></div>
+        <div class="ps-pip"></div><div class="ps-pip"></div>
+      </div>
+      <h4 class="ps-title">A roadmap built for your moment.</h4>
+      <p class="ps-body">No cookie-cutter packages. No template thinking. Every plan is written specifically for your market, your budget, and where you want to go.</p>
+      <span class="ps-count">02 / 04</span>
+    </div>
+  </div>
+
+  <div class="ps-step">
+    <div class="ps-left">
+      <p class="ps-step-num">03</p>
+      <h3 class="ps-step-name">Create &amp;<br>Launch.</h3>
+      <div class="ps-rule"></div>
+      <div class="ps-big-n">03</div>
+    </div>
+    <div class="ps-right">
+      <div class="ps-pips">
+        <div class="ps-pip active"></div><div class="ps-pip active"></div>
+        <div class="ps-pip active"></div><div class="ps-pip"></div>
+      </div>
+      <h4 class="ps-title">Built to perform, not just impress.</h4>
+      <p class="ps-body">Websites, content, visuals, campaigns — every asset crafted with precision. We care as much about the results as the craft behind them.</p>
+      <span class="ps-count">03 / 04</span>
+    </div>
+  </div>
+
+  <div class="ps-step">
+    <div class="ps-left">
+      <p class="ps-step-num">04</p>
+      <h3 class="ps-step-name">Grow<br>Together.</h3>
+      <div class="ps-rule"></div>
+      <div class="ps-big-n">04</div>
+    </div>
+    <div class="ps-right">
+      <div class="ps-pips">
+        <div class="ps-pip active"></div><div class="ps-pip active"></div>
+        <div class="ps-pip active"></div><div class="ps-pip active"></div>
+      </div>
+      <h4 class="ps-title">We stay rooted after launch.</h4>
+      <p class="ps-body">Most agencies disappear. We don't. We monitor, optimize, and stay invested in your growth for the long haul — because your win is our win.</p>
+      <span class="ps-count">04 / 04</span>
+    </div>
+  </div>
+
 </section>
 
 <!-- ─── CTA ────────────────────────── -->
@@ -943,7 +911,17 @@ const io = new IntersectionObserver(entries=>{
 },{threshold:0.1});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 
-// ── Count-up animation
+// ── Split screen process steps — reveal on scroll
+const psSteps = document.querySelectorAll('.ps-step');
+const psObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+  });
+}, { threshold: 0.25 });
+psSteps.forEach(s => psObs.observe(s));
+
+
+
 // Handles both integer targets and the one decimal (2.8×)
 const counters = document.querySelectorAll('.num-big[data-target]');
 const countIO = new IntersectionObserver(entries=>{
