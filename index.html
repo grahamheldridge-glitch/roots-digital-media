@@ -943,7 +943,24 @@ const io = new IntersectionObserver(entries=>{
 },{threshold:0.1});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 
-// ── Count-up animation
+// ── Timeline: draw spine + reveal steps on scroll
+const spine = document.getElementById('tl-spine');
+const tlSteps = document.querySelectorAll('.tl-step');
+
+const tlObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    // Draw the spine first
+    if (spine) spine.classList.add('drawn');
+    // Then reveal all steps with their staggered delays
+    tlSteps.forEach(s => s.classList.add('in'));
+    tlObs.disconnect();
+  });
+}, { threshold: 0.2 });
+
+if (tlSteps.length) tlObs.observe(tlSteps[0].closest('.timeline-wrap') || tlSteps[0]);
+
+
 // Handles both integer targets and the one decimal (2.8×)
 const counters = document.querySelectorAll('.num-big[data-target]');
 const countIO = new IntersectionObserver(entries=>{
